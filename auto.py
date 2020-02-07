@@ -7,6 +7,8 @@ import openpyxl
 import time
 import math
 
+# 读写Excel的方法----------------------------------------
+
 
 def write_excel_xlsx(path, sheet_name, value):
     index = len(value)
@@ -22,7 +24,6 @@ def write_excel_xlsx(path, sheet_name, value):
 
 def read_excel_xlsx(path, sheet_name):
     workbook = openpyxl.load_workbook(path)
-    # sheet = wb.get_sheet_by_name(sheet_name)这种方式已经弃用，不建议使用
     sheet = workbook[sheet_name]
     l = []
 
@@ -32,6 +33,8 @@ def read_excel_xlsx(path, sheet_name):
             tmp.append(cell.value)
         l.append(tmp.copy())
     return l
+
+# 获取必要数据的方法----------------------------------------
 
 
 def get_boll(stock_code: str, ma_day: int):
@@ -44,7 +47,6 @@ def get_boll(stock_code: str, ma_day: int):
 
     up, mid, dn = ta.BBANDS(close_list, timeperiod=ma_day,
                             nbdevup=2, nbdevdn=2, matype=0)
-    #ma = pre_data.iloc[0][ma_type]
     return round(up[-1], 3), round(mid[-1], 2), round(dn[-1], 2)
 
 
@@ -65,20 +67,24 @@ def get_position() -> list:
     return position
 
 
-trader = THSTrader(r"C:\\同花顺软件\\同花顺\\xiadan.exe")    # 连接客户端
-code_list = []
+# 脚本过程----------------------------------------
 
+
+# 存放交易记录的文件
 book_name_xlsx = 'log.xlsx'
 sheet_name_xlsx = 'sheet1'
 write_list = []
+# 新建/追加记录
 try:
     write_list = read_excel_xlsx(book_name_xlsx, sheet_name_xlsx)
 except:
     write_list.append(['时间', '价格', '成交数量', '成交金额'])
 
+# 同花顺客户端过程
+trader = THSTrader(r"C:\\同花顺软件\\同花顺\\xiadan.exe")    # 连接客户端
 position = get_position()  # 持仓信息
-fortune = trader.get_balance()['可用金额']
-spy_code_list = {}  # 被清仓的代码与清仓价值, code:value
+fortune = trader.get_balance()['可用金额'] #可支配金额，每次交易前都要重新获取一次
+spy_code_list = {}  # 被清仓的代码与清仓价值, {code:value}
 for item in position:
     fortune = trader.get_balance()['可用金额']
     code = (str(item['证券代码']).zfill(6))

@@ -1,3 +1,5 @@
+**[easytrader](https://github.com/shidenggui/easytrader)仍然有维护，而本项目的维护已经基本停止，如有使用需要，可转步到easytrader，谢谢。**
+
 # THSTrader
 量化交易。通用版同花顺客户端的python API。(Python3)
 
